@@ -1,0 +1,6 @@
+name: Database logging for CMI
+type: module
+description: 'Logs changes to configuration.'
+package: Configuration
+version: VERSION
+core: 8.x
