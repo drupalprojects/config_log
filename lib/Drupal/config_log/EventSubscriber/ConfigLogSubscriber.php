@@ -13,6 +13,10 @@ use Drupal\Core\Config\ConfigCrudEvent;
 use Drupal\Core\Config\ConfigRenameEvent;
 use Drupal\Core\Config\ConfigImporterEvent;
 use Drupal\Core\Config\ConfigEvents;
+use Drupal\Component\Utility\String;
+use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\Yaml\Exception\DumpException;
+use Symfony\Component\Yaml\Parser;
 
 /**
  * ConfigLog subscriber for configuration CRUD events.
@@ -27,12 +31,39 @@ class ConfigLogSubscriber implements EventSubscriberInterface {
   protected $database;
 
   /**
+   * A shared YAML dumper instance.
+   *
+   * @var Symfony\Component\Yaml\Dumper
+   */
+  protected $dumper;
+
+  /**
    * Constructs the ConfigLogSubscriber object.
    *
    * @param \Drupal\Core\Database\Connection $connection
    */
   function __construct(Connection $database) {
     $this->database = $database;
+  }
+
+  /**
+   * Encode data as YAML
+   *
+   * @see: Drupal\Core\Config\FileStorage:encode()
+   *
+   * @throws Symfony\Component\Yaml\Exception\DumpException
+   */
+  protected function encode($data) {
+    if (!isset($this->dumper)) {
+      $this->dumper = new Dumper();
+      // Set Yaml\Dumper's default indentation for nested nodes/collections to
+      // 2 spaces for consistency with Drupal coding standards.
+      $this->dumper->setIndentation(2);
+    }
+    // The level where you switch to inline YAML is set to PHP_INT_MAX to ensure
+    // this does not occur. Also set the exceptionOnInvalidType parameter to
+    // TRUE, so exceptions are thrown for an invalid data type.
+    return $this->dumper->dump($data, PHP_INT_MAX, 0, TRUE);
   }
 
   /**
@@ -47,7 +78,7 @@ class ConfigLogSubscriber implements EventSubscriberInterface {
       'uid' => \Drupal::currentUser()->id(),
       'operation' => $config->isNew() ? 'create' : 'update',
       'name' => $config->getName(),
-      'data' => serialize($config->get()),
+      'data' => $this->encode($config->get()),
     );
     $this->database
       ->insert('config_log')
@@ -69,7 +100,7 @@ class ConfigLogSubscriber implements EventSubscriberInterface {
       'operation' => 'rename',
       'name' => $config->getName(),
       'old_name' => $event->getOldName(),
-      'data' => serialize($config->get()),
+      'data' => $this->encode($config->get()),
     );
     $this->database
       ->insert('config_log')
