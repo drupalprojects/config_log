@@ -31,6 +31,7 @@ function config_log_drush_command() {
  * Implements drush_hook_COMMAND().
  */
 function drush_config_log_commit($path = '') {
+  // @todo - don't bother with local repo. Push using Github file contents API. See https://developer.github.com/v3/repos/contents/
   if (!$path) {
     return drush_log('Repo path is required', 'error');
   }
@@ -60,7 +61,7 @@ function drush_config_log_commit($path = '') {
   // Push any commits we just made to a remote repo (i.e. the fork).
   if ($last > $last_initial) {
     // @todo: Don't assume hard coded remote name and branch name.
-    $repo = drush_get_option('git-remote-url', 'https://github.com/AcquiaFullCircle/example.com.git');
+    $repo = drush_get_option('git-remote-url', 'git@github.com:AcquiaFullCircle/example.com.git');
     $cmd = 'cd ' . escapeshellarg($config_vcs) . ' && git push ' . escapeshellarg($repo) . ' 20150212-001';
     $out = system($cmd, $retval);
     if ($retval == 0) {
