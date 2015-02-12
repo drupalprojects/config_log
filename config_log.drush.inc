@@ -36,11 +36,11 @@ function drush_config_log_commit($path = '') {
   $path = realpath($path);
   $config_vcs = $path . '/' . drush_get_option('config-vcs', 'config_vcs');
   $track = "$path/config_log_commit_last";
-  $last = (int) trim(@file_get_contents($track));
+  $last = $last_initial = (int) trim(@file_get_contents($track));
   do {
     $result = db_query('SELECT * FROM {config_log} WHERE clid > :id ORDER BY clid ASC', array('id' => $last));
     foreach ($result as $row) {
-      $account = user_load($row->uid);
+      $account = \Drupal\user\Entity\User::load($row->uid);
       $filename = $config_vcs . '/' . $row->name . '.yml';
       file_put_contents($filename, $row->data);
       $cmd = 'cd ' . escapeshellarg($config_vcs) . ' && git add * && (git diff --quiet HEAD || git commit -m ' .  escapeshellarg($row->clid . ' user: ' . $account->getUsername() . ' operation: ' . $row->operation . ' name:' . $row->name).')';
@@ -55,4 +55,17 @@ function drush_config_log_commit($path = '') {
     }
     sleep(5);
   } while (1);
+
+  // Push any commits we just made to a remote repo (i.e. the fork).
+  if ($last > $last_initial) {
+    // @todo: Don't assume hard coded remote name and branch name.
+    $cmd = 'cd ' . escapeshellarg($config_vcs) . ' && git push AcquiaFullCircle 20150212-001';
+    $out = system($cmd, $retval);
+    if ($retval == 0) {
+      // Success!
+    }
+    else {
+      throw new Exception($out);
+    }
+  }
 }
