@@ -20,7 +20,8 @@ function config_log_drush_command() {
       'repo path' => 'Path to the git repo.',
     ),
     'options' => array(
-      'config-vcs' => 'Dirctory with the config (defaults to config_vcs)',
+      'config-vcs' => 'Directory with the config (defaults to config_vcs)',
+      'git-remote-url' => 'URL to push the commits to.',
     ),
   );
   return $items;
@@ -59,7 +60,8 @@ function drush_config_log_commit($path = '') {
   // Push any commits we just made to a remote repo (i.e. the fork).
   if ($last > $last_initial) {
     // @todo: Don't assume hard coded remote name and branch name.
-    $cmd = 'cd ' . escapeshellarg($config_vcs) . ' && git push AcquiaFullCircle 20150212-001';
+    $repo = drush_get_option('git-remote-url', 'https://github.com/AcquiaFullCircle/example.com.git');
+    $cmd = 'cd ' . escapeshellarg($config_vcs) . ' && git push ' . escapeshellarg($repo) . ' 20150212-001';
     $out = system($cmd, $retval);
     if ($retval == 0) {
       // Success!
