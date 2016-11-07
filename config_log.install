@@ -55,4 +55,3 @@ function config_log_schema() {
   );
   return $schema;
 }
-

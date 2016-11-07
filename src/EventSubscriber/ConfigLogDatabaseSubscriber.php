@@ -151,4 +151,3 @@ class ConfigLogDatabaseSubscriber implements EventSubscriberInterface {
     return $events;
   }
 }
-

@@ -1,11 +1,9 @@
 <?php
 
-
-
 /**
  * Implements hook_drush_command().
  *
- * In this hook, you specify which commands your drush module makes available,
+ * In this hook, you specify which commands your Drush module makes available,
  * what it does and description.
  *
  * Notice how this structure closely resembles how you define menu hooks.
@@ -31,7 +29,8 @@ function config_log_drush_command() {
  * Implements drush_hook_COMMAND().
  */
 function drush_config_log_commit($path = '') {
-  // @todo - don't bother with local repo. Push using Github file contents API. See https://developer.github.com/v3/repos/contents/
+  // @todo - don't bother with local repo. Push using Github file contents API.
+  // See https://developer.github.com/v3/repos/contents/
   if (!$path) {
     return drush_log('Repo path is required', 'error');
   }
