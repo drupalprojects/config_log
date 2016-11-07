@@ -4,4 +4,10 @@ services:
     arguments: ['@database']
     tags:
       - { name: event_subscriber }
+  config_log_psr_subscriber:
+    class: Drupal\config_log\EventSubscriber\ConfigLogPsrSubscriber
+    arguments: ['@logger.channel.default']
+    tags:
+      - { name: event_subscriber }
+
 

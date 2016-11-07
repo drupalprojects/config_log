@@ -1,4 +1,4 @@
-name: Database logging for CMI
+name: Configuration log
 type: module
 description: 'Logs changes to configuration.'
 package: Configuration
