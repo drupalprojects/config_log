@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\config_log\EventSubscriber\ConfigLogSubscriber.
+ * Contains Drupal\config_log\EventSubscriber\ConfigLogDatabaseSubscriber.
  */
 
 namespace Drupal\config_log\EventSubscriber;
@@ -20,7 +20,7 @@ use Symfony\Component\Yaml\Parser;
 /**
  * ConfigLog subscriber for configuration CRUD events.
  */
-class ConfigLogSubscriber implements EventSubscriberInterface {
+class ConfigLogDatabaseSubscriber implements EventSubscriberInterface {
 
   /**
    * The database connection.
@@ -37,7 +37,7 @@ class ConfigLogSubscriber implements EventSubscriberInterface {
   protected $dumper;
 
   /**
-   * Constructs the ConfigLogSubscriber object.
+   * Constructs the ConfigLogDatabaseSubscriber object.
    *
    * @param \Drupal\Core\Database\Connection $connection
    */

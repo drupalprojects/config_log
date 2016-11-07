@@ -1,6 +1,6 @@
 services:
-  config_log_subscriber:
-    class: Drupal\config_log\EventSubscriber\ConfigLogSubscriber
+  config_log_database_subscriber:
+    class: Drupal\config_log\EventSubscriber\ConfigLogDatabaseSubscriber
     arguments: ['@database']
     tags:
       - { name: event_subscriber }
