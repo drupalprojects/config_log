@@ -55,17 +55,18 @@ class ConfigLogPsrSubscriber implements EventSubscriberInterface {
    */
   protected function logConfigChanges($config, $diff, $subkey = NULL) {
     foreach ($diff as $key => $value) {
+      $full_key = $key;
       if ($subkey) {
-        $key = $this->joinKey($subkey, $key);
+        $full_key = $this->joinKey($subkey, $key);
       }
 
       if (is_array($value)) {
-        $this->logConfigChanges($config, $diff[$key], $key);
+        $this->logConfigChanges($config, $diff[$key], $full_key);
       }
       else {
         $this->logger->info("Configuration changed: %key changed from %original to %value", array(
-          '%key' => $this->joinKey($config->getName(), $key),
-          '%original' => $this->format($config->getOriginal($key)),
+          '%key' => $this->joinKey($config->getName(), $full_key),
+          '%original' => $this->format($config->getOriginal($full_key)),
           '%value' => $this->format($value),
         ));
       }
